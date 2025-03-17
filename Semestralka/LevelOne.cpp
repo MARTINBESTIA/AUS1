@@ -121,6 +121,7 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 
 
 
+
 void LevelOne::addToFiltered(const Town& pTown)
 {
 	this->filteredData.push_back(pTown);
