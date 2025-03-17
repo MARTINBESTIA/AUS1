@@ -107,7 +107,7 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 										malePopulation2023, femalePopulation2023,
 										malePopulation2024, femalePopulation2024,
 										name);
-		std::cout << this->data.back().townName << " " << this->data.back().townID << " " << this->data.back().malePopulation2020 << " " << this->data.back().femalePopulation2020 << " " << this->data.back().malePopulation2021 << " " << this->data.back().femalePopulation2021 << " " << this->data.back().malePopulation2022 << " " << this->data.back().femalePopulation2022 << " " << this->data.back().malePopulation2023 << " " << this->data.back().femalePopulation2023 << " " << this->data.back().malePopulation2024 << " " << this->data.back().femalePopulation2024 << std::endl;
+		//std::cout << this->data.back().townName << " " << this->data.back().townID << " " << this->data.back().malePopulation2020 << " " << this->data.back().femalePopulation2020 << " " << this->data.back().malePopulation2021 << " " << this->data.back().femalePopulation2021 << " " << this->data.back().malePopulation2022 << " " << this->data.back().femalePopulation2022 << " " << this->data.back().malePopulation2023 << " " << this->data.back().femalePopulation2023 << " " << this->data.back().malePopulation2024 << " " << this->data.back().femalePopulation2024 << std::endl;
 	}
 	
 
@@ -122,11 +122,23 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 
 
 
-void LevelOne::addToFiltered(const Town& pTown)
+void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year)
 {
-	this->filteredData.push_back(pTown);
+	this->filteredData.clear();
+	auto it = this->data.begin();
+	auto end = this->data.end();
+	while (it != end) {
+		if (this->containsStr(*(it), str) && this->hasMaxResidents(*(it), maxResidents, year) && this->hasMinResidents(*(it), minResidents, year))
+		{
+			this->filteredData.push_back(*it);
+			std::cout << (*it).townName << " " << "<" << (*it).townID << ">" << std::endl;
+		}
+		++it; // mozno skipuje posledny
+	}
 }
+
 
 LevelOne::~LevelOne()
 {
+	this->data.clear();
 }

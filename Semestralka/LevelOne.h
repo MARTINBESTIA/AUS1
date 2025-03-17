@@ -34,7 +34,8 @@ private:
 		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024);
 
 		std::function<bool(const Town&, const std::string&)> containsStr = [](const Town& town, const std::string& substr) -> bool {
-			for (int i = 0; i < town.townName.length() - substr.length(); i++) {
+			if (substr.length() > town.townName.length()) return false;
+			for (int i = 0; i <= town.townName.length() - substr.length(); i++) {
 				if (town.townName.substr(i, substr.length()) == substr) {
 					return true;
 				}
@@ -43,27 +44,6 @@ private:
 		};
 
 		std::function<bool(const Town&, int residentsAmount, int year)> hasMaxResidents = [](const Town& town, int residentsAmount, int year) -> bool {
-			switch (year) {
-			case 2020:
-				return town.malePopulation2020 + town.femalePopulation2020 > residentsAmount;
-				break;
-			case 2021:
-				return town.malePopulation2021 + town.femalePopulation2021 > residentsAmount;
-				break;
-			case 2022:
-				return town.malePopulation2022 + town.femalePopulation2022 > residentsAmount;
-				break;
-			case 2023:
-				return town.malePopulation2023 + town.femalePopulation2023 > residentsAmount;
-				break;
-			case 2024:
-				return town.malePopulation2024 + town.femalePopulation2024 > residentsAmount;
-				break;
-			}
-			return false;
-		};
-
-		std::function<bool(const Town&, int residentsAmount, int year)> hasMinResidents = [](const Town& town, int residentsAmount, int year) -> bool {
 			switch (year) {
 			case 2020:
 				return town.malePopulation2020 + town.femalePopulation2020 < residentsAmount;
@@ -83,9 +63,32 @@ private:
 			}
 			return false;
 		};
+
+		std::function<bool(const Town&, int residentsAmount, int year)> hasMinResidents = [](const Town& town, int residentsAmount, int year) -> bool {
+			switch (year) {
+			case 2020:
+				return town.malePopulation2020 + town.femalePopulation2020 > residentsAmount;
+				break;
+			case 2021:
+				return town.malePopulation2021 + town.femalePopulation2021 > residentsAmount;
+				break;
+			case 2022:
+				return town.malePopulation2022 + town.femalePopulation2022 > residentsAmount;
+				break;
+			case 2023:
+				return town.malePopulation2023 + town.femalePopulation2023 > residentsAmount;
+				break;
+			case 2024:
+				return town.malePopulation2024 + town.femalePopulation2024 > residentsAmount;
+				break;
+			}
+			return false;
+		};
 		
+
+		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
+
 		std::vector<Town>& getData() { return this->data; };
-		void addToFiltered(const Town& pTown);
 		~LevelOne();
 
 };

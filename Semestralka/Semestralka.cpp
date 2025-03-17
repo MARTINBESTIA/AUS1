@@ -13,9 +13,7 @@ int main()
 {
 	SetConsoleOutputCP(1252);
 	LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv");
-	
-
-
+	levelOne.filterOnPredicates("dorf", 1790, 1500, 2022);
 	return 0;
 		
 }
