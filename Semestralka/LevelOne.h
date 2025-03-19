@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <iostream>
 class LevelOne
 {
 private:
@@ -85,6 +86,26 @@ private:
 			return false;
 		};
 		
+		template <typename Iterator, typename Predicate>
+		void filter(Iterator begin, Iterator end, Predicate predicate, std::string str) {
+			for (Iterator it = begin; it != end; it++) {
+				if (predicate(*it, str)) {
+					filteredData.push_back(*it);
+					std::cout << (*it).townName << " " << "<" << (*it).townID << ">" << std::endl;
+				}
+			}
+		};
+
+		template <typename Iterator, typename Predicate>
+		void filter(Iterator begin, Iterator end, Predicate predicate, int residents, int year) {
+			for (Iterator it = begin; it != end; it++) {
+				if (predicate(*it, residents, year)) {
+					filteredData.push_back(*it);
+					std::cout << (*it).townName << " " << "<" << (*it).townID << ">" << std::endl;
+				}
+
+			}
+		};
 
 		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
 
