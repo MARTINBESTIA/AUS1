@@ -3,12 +3,14 @@
 #include <functional>
 #include <vector>
 #include <iostream>
+#include <libds/amt/explicit_hierarchy.h>
+
 class LevelOne
 {
 private:
 
-	struct Town {
-		int townID;
+	struct Territorial_unit {
+		int unitID;
 		int malePopulation2020;
 		int femalePopulation2020;
 		int malePopulation2021;
@@ -19,32 +21,51 @@ private:
 		int femalePopulation2023;
 		int malePopulation2024;
 		int femalePopulation2024;
-		std::string townName;
+		std::string unitName;
+		std::string regionID;
 
-		Town(int ptownID, int pmalePopulation2020, int pfemalePopulation2020, int pmalePopulation2021, int pfemalePopulation2021, int pmalePopulation2022,
-			int pfemalePopulation2022, int pmalePopulation2023, int pfemalePopulation2023, int pmalePopulation2024, int pfemalePopulation2024, const std::string& ptownName) :
-			townID(ptownID), malePopulation2020(pmalePopulation2020), femalePopulation2020(pfemalePopulation2020), malePopulation2021(pmalePopulation2021),
+		bool operator==(const Territorial_unit& pUnit) const {
+			return unitID == pUnit.unitID && malePopulation2020 == pUnit.malePopulation2020 && malePopulation2021 == pUnit.malePopulation2021
+				&& malePopulation2022 == pUnit.malePopulation2022 && malePopulation2023 == pUnit.malePopulation2023 && malePopulation2024 == pUnit.malePopulation2024
+				&& femalePopulation2020 == pUnit.femalePopulation2020 && femalePopulation2021 == pUnit.femalePopulation2021
+				&& femalePopulation2022 == pUnit.femalePopulation2022 && femalePopulation2023 == pUnit.femalePopulation2023 && femalePopulation2024 == pUnit.femalePopulation2024
+				&& unitName == pUnit.unitName && regionID == pUnit.regionID;
+		};
+
+		Territorial_unit() = default;
+
+		Territorial_unit(int ptownID, int pmalePopulation2020, int pfemalePopulation2020, int pmalePopulation2021, int pfemalePopulation2021, int pmalePopulation2022,
+			int pfemalePopulation2022, int pmalePopulation2023, int pfemalePopulation2023, int pmalePopulation2024, int pfemalePopulation2024, const std::string& ptownName, const std::string& pRegionID) :
+			unitID(ptownID), malePopulation2020(pmalePopulation2020), femalePopulation2020(pfemalePopulation2020), malePopulation2021(pmalePopulation2021),
 			femalePopulation2021(pfemalePopulation2021), malePopulation2022(pmalePopulation2022), femalePopulation2022(pfemalePopulation2022),
 			malePopulation2023(pmalePopulation2023), femalePopulation2023(pfemalePopulation2023), malePopulation2024(pmalePopulation2024),
-			femalePopulation2024(pfemalePopulation2024), townName(ptownName) {}
+			femalePopulation2024(pfemalePopulation2024), unitName(ptownName), regionID(pRegionID) {}
+
+		
+		
+	
 	};
-	std::vector<Town> data;
-	std::vector<Town> filteredData;
+	std::vector<Territorial_unit> data;
+	std::vector<Territorial_unit> filteredData;
+	ds::amt::MultiWayExplicitHierarchy<Territorial_unit> dataHierarchy;
+
+	
+
 	
 	public:
-		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024);
+		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024, std::string uzemie, std::string obce);
 
-		std::function<bool(const Town&, const std::string&)> containsStr = [](const Town& town, const std::string& substr) -> bool {
-			if (substr.length() > town.townName.length()) return false;
-			for (int i = 0; i <= town.townName.length() - substr.length(); i++) {
-				if (town.townName.substr(i, substr.length()) == substr) {
+		std::function<bool(const Territorial_unit&, const std::string&)> containsStr = [](const Territorial_unit& town, const std::string& substr) -> bool {
+			if (substr.length() > town.unitName.length()) return false;
+			for (int i = 0; i <= town.unitName.length() - substr.length(); i++) {
+				if (town.unitName.substr(i, substr.length()) == substr) {
 					return true;
 				}
 			}
 			return false;
 		};
 
-		std::function<bool(const Town&, int residentsAmount, int year)> hasMaxResidents = [](const Town& town, int residentsAmount, int year) -> bool {
+		std::function<bool(const Territorial_unit&, int residentsAmount, int year)> hasMaxResidents = [](const Territorial_unit& town, int residentsAmount, int year) -> bool {
 			switch (year) {
 			case 2020:
 				return town.malePopulation2020 + town.femalePopulation2020 < residentsAmount;
@@ -65,7 +86,7 @@ private:
 			return false;
 		};
 
-		std::function<bool(const Town&, int residentsAmount, int year)> hasMinResidents = [](const Town& town, int residentsAmount, int year) -> bool {
+		std::function<bool(const Territorial_unit&, int residentsAmount, int year)> hasMinResidents = [](const Territorial_unit& town, int residentsAmount, int year) -> bool {
 			switch (year) {
 			case 2020:
 				return town.malePopulation2020 + town.femalePopulation2020 > residentsAmount;
@@ -91,17 +112,20 @@ private:
 			for (Iterator it = begin; it != end; it++) {
 				if (predicate(*it, str)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).townName << " " << "<" << (*it).townID << ">" << std::endl;
+					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: " 
+					<< (*it).malePopulation2020 + (*it).malePopulation2021 + (*it).malePopulation2022 + (*it).malePopulation2023 + (*it).malePopulation2024 << " Female population: "
+					<< (*it).femalePopulation2020 + (*it).femalePopulation2021 + (*it).femalePopulation2022 + (*it).femalePopulation2023 + (*it).femalePopulation2024 << std::endl;
 				}
 			}
 		};
-
+		
 		template <typename Iterator, typename Predicate>
 		void filter(Iterator begin, Iterator end, Predicate predicate, int residents, int year) {
 			for (Iterator it = begin; it != end; it++) {
 				if (predicate(*it, residents, year)) {
-					filteredData.push_back(*it);
-					std::cout << (*it).townName << " " << "<" << (*it).townID << ">" << std::endl;
+					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: "
+						<< (*it).malePopulation2020 + (*it).malePopulation2021 + (*it).malePopulation2022 + (*it).malePopulation2023 + (*it).malePopulation2024 << " Female population: "
+						<< (*it).femalePopulation2020 + (*it).femalePopulation2021 + (*it).femalePopulation2022 + (*it).femalePopulation2023 + (*it).femalePopulation2024 << std::endl;
 				}
 
 			}
@@ -109,7 +133,8 @@ private:
 
 		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
 
-		std::vector<Town>& getData() { return this->data; };
+		std::vector<Territorial_unit>& getData() { return this->data; };
+
 		~LevelOne();
 
 };
