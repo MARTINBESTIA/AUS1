@@ -7,6 +7,7 @@
 #define _CRTDBG_MAP_ALLOC 
 #include <stdlib.h> 
 #include <crtdbg.h>
+#include <libds/amt/hierarchy.h>
 
 
 
@@ -18,6 +19,7 @@ int main()
 	{
 		LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv", "uzemie.csv", "obce.csv");
 		levelOne.filter(levelOne.getData().begin(), levelOne.getData().end(), levelOne.containsStr, "öf");
+		levelOne.filter(levelOne.getIterator(levelOne.getIteratorNode()), levelOne.getNullptrIterator(), levelOne.containsStr, "a");
 	}
 	_CrtDumpMemoryLeaks();
 	return 0;

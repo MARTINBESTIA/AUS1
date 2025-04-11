@@ -129,7 +129,9 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 	}
 
 	ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& root = dataHierarchy.emplaceRoot();
-	root.data_ = Territorial_unit(10000,0,0,0,0,0,0,0,0,0,0,"Austria","<AT0>");
+	root.data_ = Territorial_unit(0,0,0,0,0,0,0,0,0,0,0,"Austria","<AT0>");
+	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator it(&this->dataHierarchy, &root);
+
 	std::string name;
 	std::string unit_id;
 	std::string region_id;
@@ -158,6 +160,7 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 			auto* preFather = dataHierarchy.accessSon(root, preFatherIndex);
 			auto* father = dataHierarchy.accessSon(*preFather, fatherIndex);
 			dataHierarchy.emplaceSon(*father, sonIndex).data_ = Territorial_unit(stoi(unit_id.substr(3, 3)), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, name, unit_id);
+			//std::cout << dataHierarchy.accessSon(*father, sonIndex)->data_.unitName << " " << dataHierarchy.accessSon(*father, sonIndex)->data_.unitID << std::endl;
 		}
 	}
 	int sequenceIndex = 0;
@@ -189,14 +192,22 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		auto* preFather = dataHierarchy.accessSon(*prePreFather, preFatherIndex);
 		auto* father = dataHierarchy.accessSon(*preFather, FatherIndex);
 
-		this->data[0].regionID = region_id;
+		this->data[sequenceIndex].regionID = region_id;
 		dataHierarchy.emplaceSon(*father, hierarchyIndex).data_ = this->data[sequenceIndex];
+
+		addResidents(father->data_, this->data[sequenceIndex]);
+		addResidents(preFather->data_, this->data[sequenceIndex]);
+		addResidents(prePreFather->data_, this->data[sequenceIndex]);
+		addResidents(root.data_, this->data[sequenceIndex]);
+
 		sequenceIndex++;
 		hierarchyIndex++;
-		std::cout << sequenceIndex << std::endl;
+		//std::cout << sequenceIndex << std::endl;
 	}
-
-
+	/*
+	auto* prePreFather = dataHierarchy.accessSon(root, 2);
+	auto* preFather = dataHierarchy.accessSon(*prePreFather, 3);
+	std::cout << preFather->data_.femalePopulation2024 + preFather->data_.malePopulation2024 << " " << preFather->data_.unitName << std::endl;*/
 	file_obce.close();
 	file_uzemie.close();
 }
@@ -218,6 +229,11 @@ void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int 
 		++it; 
 	}
 }
+/*
+ds::amt::Hierarchy<ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>>::PreOrderHierarchyIterator LevelOne::getHierarchyIterator()
+{
+	return ;
+}*/
 
 
 LevelOne::~LevelOne()
