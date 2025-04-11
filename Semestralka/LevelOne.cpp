@@ -136,8 +136,10 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 	std::string unit_id;
 	std::string region_id;
 	int index = 0;
+
 	while (!file_uzemie.eof()) {
 		std::getline(file_uzemie, line);
+		if (line.empty()) break;
 		std::istringstream uzemie_ss(line);
 		std::getline(uzemie_ss, name, ';');
 		std::getline(uzemie_ss, unit_id, ';');
