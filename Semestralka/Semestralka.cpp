@@ -18,8 +18,22 @@ int main()
 	SetConsoleOutputCP(1252);
 	{
 		LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv", "uzemie.csv", "obce.csv");
-		levelOne.filter(levelOne.getData().begin(), levelOne.getData().end(), levelOne.containsStr, "öf");
-		levelOne.filter(levelOne.getIterator(levelOne.getIteratorNode()), levelOne.getNullptrIterator(), levelOne.containsStr, "a");
+		auto it = levelOne.getIterator(levelOne.getIteratorNode());
+		int choice = levelOne.choosePredicate();
+		switch (choice) {
+			case 1:
+				levelOne.filter(it, levelOne.getNullptrIterator(),levelOne.containsStr, levelOne.getPredValue());
+				break;
+			case 2:
+				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasType, levelOne.getPredTypeValue());
+				break;
+			case 3:
+				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasMaxResidents, levelOne.getPredPopulationValue(), levelOne.getPredYearValue());
+				break;
+			case 4:
+				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasMinResidents, levelOne.getPredPopulationValue(), levelOne.getPredYearValue());
+				break;
+		}
 	}
 	_CrtDumpMemoryLeaks();
 	return 0;

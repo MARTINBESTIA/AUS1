@@ -48,27 +48,28 @@ private:
 	
 	};
 
-
-
-
-
 	std::vector<Territorial_unit> data;
 	std::vector<Territorial_unit> filteredData;
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit> dataHierarchy;
 
-	
+	enum TerritoryType {
+		Commune,
+		Region,
+		FedRepublic,
+		GeoPart,
+		Country
+	};
 
+	std::string predValue;
+	int predResidentsValue;
+	int predYearValue;
+	TerritoryType predTypeValue;
+	
 	
 	public:
 		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024, std::string uzemie, std::string obce);
 
-		enum TerritoryType {
-			Commune,
-			Region,
-			FedRepublic,
-			GeoPart,
-			Country
-		};
+		
 
 		std::function<bool(const Territorial_unit&, TerritoryType)> hasType = [](const Territorial_unit& town, TerritoryType type) -> bool {
 			TerritoryType tType;
@@ -196,20 +197,13 @@ private:
 		
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& getIteratorNode() {
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot = *(dataHierarchy.accessRoot());
-		//Predicate predicate = nullptr;
 		int residentsAmount = 0;
 		std::string nameSubstr = "";
-		//TerritoryType type;
 		std::cout << "ITERATOR MENU:" << std::endl;
 		std::cout << "-r --- runs the iterations from set root" << std::endl;
-		//std::cout << "-f --- runs filter, set predicate first" << std::endl;
 		std::cout << "s n --- jumps to son at nth index. Example s 3 jumps to son at 3rd index" << std::endl;
 		std::cout << "-f --- jumps to father" << std::endl;
-		//std::cout << "pmax value --- sets predicate to hasMaxResidents, Example pmax 3000" << std::endl;
-		//std::cout << "pmin value --- sets predicate to hasMinResidents, Example pmin 3000" << std::endl;
-		//std::cout << "pstr value --- sets predicate to containsStr, Example pstr dorf" << std::endl;
-		//std::cout << "ptype value --- sets predicate to hasType, ptype Region" << std::endl;
-		//std::cout << "ptype key values are: Commune, Region, FedRepublic, GeoPart, Country" << std::endl;
+		
 		while (true) {
 			std::cout << " ------------------------------------------------" << std::endl;
 			std::cout << "Current root: " << currentRoot.data_.unitName << std::endl;
@@ -285,6 +279,67 @@ private:
 		return currentRoot;
 		
 		};
+		
+		int choosePredicate() {
+
+			std::cout << "CHOOSE PREDICATE MENU:" << std::endl;
+			std::cout << "pmax value --- sets predicate to hasMaxResidents, Example pmax 3000" << std::endl;
+			std::cout << "pmin value --- sets predicate to hasMinResidents, Example pmin 3000" << std::endl;
+			std::cout << "pstr value --- sets predicate to containsStr, Example pstr dorf" << std::endl;
+			std::cout << "ptype value --- sets predicate to hasType, ptype Region" << std::endl;
+			std::cout << "ptype key values are: Commune, Region, FedRepublic, GeoPart, Country" << std::endl;
+			std::string command;
+			std::getline(std::cin, command);
+			int manMixValue = 0;
+			while (true) {
+				if (command.substr(0, 4) == "pmax") {
+					int residents = std::stoi(command.substr(5, command.size() - 5));
+					this->predResidentsValue = residents;
+					manMixValue = 3;
+					break;
+				}
+				if (command.substr(0, 4) == "pmin") {
+					int residents = std::stoi(command.substr(5, command.size() - 5));
+					this->predResidentsValue = residents;
+					manMixValue = 4;
+					break;
+				}
+				if (command.substr(0, 4) == "pstr") {
+					std::string nameSubstr = command.substr(5, command.size() - 5);
+					this->predValue = nameSubstr;
+					return 1;
+				}
+				if (command.substr(0, 5) == "ptype") {
+					std::string typeStr = command.substr(6, command.size() - 6);
+					if (typeStr == "Commune") this->predTypeValue = Commune;
+					else if (typeStr == "Region") this->predTypeValue = Region;
+					else if (typeStr == "FedRepublic") this->predTypeValue = FedRepublic;
+					else if (typeStr == "GeoPart") this->predTypeValue = GeoPart;
+					else if (typeStr == "Country") this->predTypeValue = Country;
+					else {
+						std::cout << "Invalid type" << std::endl;
+						continue;
+					}
+					return 2;
+				}
+			}
+			if (command == "pmax" || command == "pmin") {
+				std::cout << "Enter year from 2020 to 2024" << std::endl;
+				int year = 0;
+				while (true) {
+					std::cout << "Enter year: " << std::endl;
+					std::cin >> year;
+					if (year < 2020 || year > 2024) {
+						std::cout << "Invalid year" << std::endl;
+						continue;
+					}
+					this->predYearValue = year;
+					return manMixValue;
+				}
+			}
+			return 0;
+		};
+
 		ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator getIterator(ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot) {
 			ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator it(&this->dataHierarchy, &currentRoot);
 			return it;
@@ -295,9 +350,12 @@ private:
 			return it;
 		};
 
-		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
+		std::string getPredValue() { return this->predValue; };
+		int getPredPopulationValue() { return this->predResidentsValue; };
+		int getPredYearValue() { return this->predYearValue; };
+		TerritoryType getPredTypeValue() { return this->predTypeValue; };
 
-		ds::amt::Hierarchy<ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>>::PreOrderHierarchyIterator getHierarchyIterator();
+		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
 
 		std::vector<Territorial_unit>& getData() { return this->data; };
 		

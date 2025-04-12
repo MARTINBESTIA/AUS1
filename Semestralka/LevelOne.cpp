@@ -244,7 +244,7 @@ LevelOne::~LevelOne()
 	this->filteredData.clear();
 	this->data.shrink_to_fit();
 	this->filteredData.shrink_to_fit();
-	
+	this->dataHierarchy.clear();
 
 	//std::cout << this->data.capacity()  << " " << this->filteredData.capacity() << std::endl;
 	
