@@ -1,7 +1,4 @@
-﻿// Semestralka.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <Windows.h>
 #include "LevelOne.h"
 #define _CRTDBG_MAP_ALLOC 
@@ -18,7 +15,7 @@ int main()
 	SetConsoleOutputCP(1252);
 	{
 		LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv", "uzemie.csv", "obce.csv");
-		auto it = levelOne.getIterator(levelOne.getIteratorNode());
+		auto it = levelOne.getIterator(*levelOne.getIteratorNode());
 		int choice = levelOne.choosePredicate();
 		switch (choice) {
 			case 1:

@@ -110,7 +110,6 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 										malePopulation2023, femalePopulation2023,
 										malePopulation2024, femalePopulation2024,
 										name, "");
-		//std::cout << this->data.back().townName << " " << this->data.back().townID << " " << this->data.back().malePopulation2020 << " " << this->data.back().femalePopulation2020 << " " << this->data.back().malePopulation2021 << " " << this->data.back().femalePopulation2021 << " " << this->data.back().malePopulation2022 << " " << this->data.back().femalePopulation2022 << " " << this->data.back().malePopulation2023 << " " << this->data.back().femalePopulation2023 << " " << this->data.back().malePopulation2024 << " " << this->data.back().femalePopulation2024 << std::endl;
 	}
 	
 	file_2020.close();
@@ -130,7 +129,6 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 
 	ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& root = dataHierarchy.emplaceRoot();
 	root.data_ = Territorial_unit(0,0,0,0,0,0,0,0,0,0,0,"Austria","<AT0>");
-	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator it(&this->dataHierarchy, &root);
 
 	std::string name;
 	std::string unit_id;
@@ -146,7 +144,8 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		if (unit_id.size() == 5) {
 			int index = stoi(unit_id.substr(3, 1)) - 1;
 			dataHierarchy.emplaceSon(root, index).data_ = Territorial_unit(stoi(unit_id.substr(3, 1)),0,0,0,0,0,0,0,0,0,0,name,unit_id);
-			//std::cout << dataHierarchy.accessSon(root, index)->data_.unitName << std::endl;
+			auto* current = dataHierarchy.accessSon(root, index);
+			int illl = 1;
 		}
 		if (unit_id.size() == 6) {
 			int fatherIndex = stoi(unit_id.substr(3, 1)) - 1;
@@ -162,7 +161,6 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 			auto* preFather = dataHierarchy.accessSon(root, preFatherIndex);
 			auto* father = dataHierarchy.accessSon(*preFather, fatherIndex);
 			dataHierarchy.emplaceSon(*father, sonIndex).data_ = Territorial_unit(stoi(unit_id.substr(3, 3)), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, name, unit_id);
-			//std::cout << dataHierarchy.accessSon(*father, sonIndex)->data_.unitName << " " << dataHierarchy.accessSon(*father, sonIndex)->data_.unitID << std::endl;
 		}
 	}
 	int sequenceIndex = 0;
@@ -177,10 +175,7 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		std::getline(uzemie_ss, region_id, ';');
 		if (this->data[sequenceIndex].unitName != name) {
 			std::cout << "nesedi meno " << this->data[sequenceIndex].unitName << " " << name << std::endl;
-		}/*
-		if (this->data[0].regionID != region_id) {
-			std::cout << "nesedi regionID " << this->data[0].regionID << " " << region_id << std::endl;
-		}*/
+		}
 		if (region_id_mark != region_id) {
 			region_id_mark = region_id;
 			hierarchyIndex = 0;
@@ -204,12 +199,9 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 
 		sequenceIndex++;
 		hierarchyIndex++;
-		//std::cout << sequenceIndex << std::endl;
+		
 	}
-	/*
-	auto* prePreFather = dataHierarchy.accessSon(root, 2);
-	auto* preFather = dataHierarchy.accessSon(*prePreFather, 3);
-	std::cout << preFather->data_.femalePopulation2024 + preFather->data_.malePopulation2024 << " " << preFather->data_.unitName << std::endl;*/
+	
 	file_obce.close();
 	file_uzemie.close();
 }
@@ -231,11 +223,10 @@ void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int 
 		++it; 
 	}
 }
-/*
-ds::amt::Hierarchy<ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>>::PreOrderHierarchyIterator LevelOne::getHierarchyIterator()
-{
-	return ;
-}*/
+
+
+
+
 
 
 LevelOne::~LevelOne()
@@ -244,8 +235,8 @@ LevelOne::~LevelOne()
 	this->filteredData.clear();
 	this->data.shrink_to_fit();
 	this->filteredData.shrink_to_fit();
+	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PostOrderHierarchyIterator it = this->dataHierarchy.begin();
 	this->dataHierarchy.clear();
-
-	//std::cout << this->data.capacity()  << " " << this->filteredData.capacity() << std::endl;
+	std::cout << "Size: " << this->dataHierarchy.size() << std::endl;
 	
 }

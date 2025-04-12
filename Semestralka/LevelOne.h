@@ -61,15 +61,14 @@ private:
 	};
 
 	std::string predValue;
-	int predResidentsValue;
-	int predYearValue;
+	int predResidentsValue = 0;
+	int predYearValue = 0;
 	TerritoryType predTypeValue;
+
 	
 	
 	public:
 		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024, std::string uzemie, std::string obce);
-
-		
 
 		std::function<bool(const Territorial_unit&, TerritoryType)> hasType = [](const Territorial_unit& town, TerritoryType type) -> bool {
 			TerritoryType tType;
@@ -82,7 +81,6 @@ private:
 			return type == tType;
 
 		};
-
 
 		std::function<bool(const Territorial_unit&, const std::string&)> containsStr = [](const Territorial_unit& town, const std::string& substr) -> bool {
 			if (substr.length() > town.unitName.length()) return false;
@@ -151,8 +149,6 @@ private:
 	
 		};
 
-
-
 		template <typename Iterator, typename Predicate>
 		void filter(Iterator begin, Iterator end, Predicate predicate, std::string str) {
 			Iterator it = begin;
@@ -173,9 +169,43 @@ private:
 			while (it != end) {
 				if (predicate(*it, residents, year)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: "
-						<< (*it).malePopulation2020 + (*it).malePopulation2021 + (*it).malePopulation2022 + (*it).malePopulation2023 + (*it).malePopulation2024 << " Female population: "
-						<< (*it).femalePopulation2020 + (*it).femalePopulation2021 + (*it).femalePopulation2022 + (*it).femalePopulation2023 + (*it).femalePopulation2024 << std::endl;
+					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: ";
+					switch (year) {
+						case (2020):
+						std::cout << (*it).malePopulation2020;
+						break;
+						case (2021):
+							std::cout << (*it).malePopulation2021;
+							break;
+						case (2022):
+							std::cout << (*it).malePopulation2022;
+							break;
+						case (2023):
+							std::cout << (*it).malePopulation2023;
+							break;
+						case (2024):
+							std::cout << (*it).malePopulation2024;
+							break;
+					}
+					std::cout  << " Female population: ";
+					switch (year) {
+						case (2020):
+							std::cout << (*it).femalePopulation2020;
+							break;
+						case (2021):
+							std::cout << (*it).femalePopulation2021;
+							break;
+						case (2022):
+							std::cout << (*it).femalePopulation2022;
+							break;
+						case (2023):
+							std::cout << (*it).femalePopulation2023;
+							break;
+						case (2024):
+							std::cout << (*it).femalePopulation2024;
+							break;
+					}
+					std::cout << std::endl;
 				}
 				++it;
 			}
@@ -195,8 +225,9 @@ private:
 			}
 		};
 		
-		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& getIteratorNode() {
-		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot = *(dataHierarchy.accessRoot());
+		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getIteratorNode() {
+		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* rootPtr = dataHierarchy.accessRoot();
+
 		int residentsAmount = 0;
 		std::string nameSubstr = "";
 		std::cout << "ITERATOR MENU:" << std::endl;
@@ -206,77 +237,40 @@ private:
 		
 		while (true) {
 			std::cout << " ------------------------------------------------" << std::endl;
-			std::cout << "Current root: " << currentRoot.data_.unitName << std::endl;
+			std::cout << "Current root: " << (*rootPtr).data_.unitName << std::endl;
 			std::cout << "Root sons: " << std::endl;
-			for (int i = 0; i < currentRoot.sons_->size(); i++) {
-				std::cout << "At index " << i << " : " << dataHierarchy.accessSon(currentRoot, i)->data_.unitName << std::endl;
+			for (int i = 0; i < (*rootPtr).sons_->size(); i++) {
+				std::cout << "At index " << i << " : " << dataHierarchy.accessSon((*rootPtr), i)->data_.unitName << std::endl;
 			}
 			std::cout << "Write command: " << std::endl;
-			auto* root = dataHierarchy.accessSon(currentRoot, 0);
 			std::string command;
 			std::getline(std::cin, command);
 			if (command == "-r") {
-				return currentRoot;
-			}/*
-			if (command == "-f") {
-				// start filtering
-				break;
-			}*/
+				return rootPtr;
+			}
 			else if (command[0] == 's') {
-				// jump to son
 				int index = std::stoi(command.substr(2, command.size() - 2));
-				if (index < 0 || index >= currentRoot.sons_->size()) {
+				if (index < 0 || index >= (*rootPtr).sons_->size()) {
 					std::cout << "Invalid index" << std::endl;
 					continue;
 				}
-				currentRoot = *dataHierarchy.accessSon(currentRoot, index);
+				rootPtr = dataHierarchy.accessSon((*rootPtr), index);
+				
 			}
 			else if (command == "-f") {
-				// jump to father
-				if (dataHierarchy.accessParent(currentRoot) == nullptr) {
+				if (dataHierarchy.accessParent((*rootPtr)) == nullptr) {
 					std::cout << "No father" << std::endl;
 					continue;
 				}
-				currentRoot = *dataHierarchy.accessParent(currentRoot);
+				rootPtr = dataHierarchy.accessParent((*rootPtr));
 			}
 			else {
 				std::cout << "Invalid command" << std::endl;
 				continue;
 			}
-
-			/*
-			if (command.substr(0, 4) == "pmax") {
-				// set predicate to hasMaxResidents
-				int residents = std::stoi(command.substr(5, command.size() - 5));
-				predicate = hasMaxResidents;
-			}
-			if (command.substr(0, 4) == "pmin") {
-				// set predicate to hasMinResidents
-				int residents = std::stoi(command.substr(5, command.size() - 5));
-				predicate = hasMinResidents;
-			}
-			if (command.substr(0, 4) == "pstr") {
-				// set predicate to containsStr
-				std::string nameSubstr = command.substr(5, command.size() - 5);
-				predicate = containsStr;
-			}
-			if (command.substr(0, 5) == "ptype") {
-				// set predicate to hasType
-				std::string typeStr = command.substr(6, command.size() - 6);
-				if (typeStr == "Commune") type = Commune;
-				else if (typeStr == "Region") type = Region;
-				else if (typeStr == "FedRepublic") type = FedRepublic;
-				else if (typeStr == "GeoPart") type = GeoPart;
-				else if (typeStr == "Country") type = Country;
-				else {
-					std::cout << "Invalid type" << std::endl;
-					continue;
-				}
-				predicate = hasType;
-			}
-			*/
 		}
-		return currentRoot;
+
+		return rootPtr;
 		
 		};
 		
@@ -323,7 +317,7 @@ private:
 					return 2;
 				}
 			}
-			if (command == "pmax" || command == "pmin") {
+			if (command.substr(0, 4) == "pmax" || command.substr(0, 4) == "pmin") {
 				std::cout << "Enter year from 2020 to 2024" << std::endl;
 				int year = 0;
 				while (true) {
@@ -351,15 +345,17 @@ private:
 		};
 
 		std::string getPredValue() { return this->predValue; };
+
 		int getPredPopulationValue() { return this->predResidentsValue; };
+
 		int getPredYearValue() { return this->predYearValue; };
+
 		TerritoryType getPredTypeValue() { return this->predTypeValue; };
 
 		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
 
 		std::vector<Territorial_unit>& getData() { return this->data; };
-		
-		ds::amt::MultiWayExplicitHierarchy<Territorial_unit>& getDataHierarchy() { return this->dataHierarchy; };
+
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getRoot() { return this->dataHierarchy.accessRoot(); };
 
 		~LevelOne();
