@@ -155,9 +155,7 @@ private:
 			while (it != end) {
 				if (predicate(*it, str)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: " 
-					<< (*it).malePopulation2020 + (*it).malePopulation2021 + (*it).malePopulation2022 + (*it).malePopulation2023 + (*it).malePopulation2024 << " Female population: "
-					<< (*it).femalePopulation2020 + (*it).femalePopulation2021 + (*it).femalePopulation2022 + (*it).femalePopulation2023 + (*it).femalePopulation2024 << std::endl;
+					std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
 			}
@@ -217,11 +215,10 @@ private:
 			while (it != end) {
 				if (predicate(*it, pType)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: "
-						<< (*it).malePopulation2020 + (*it).malePopulation2021 + (*it).malePopulation2022 + (*it).malePopulation2023 + (*it).malePopulation2024 << " Female population: "
-						<< (*it).femalePopulation2020 + (*it).femalePopulation2021 + (*it).femalePopulation2022 + (*it).femalePopulation2023 + (*it).femalePopulation2024 << std::endl;
+					std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
+				
 			}
 		};
 		

@@ -206,9 +206,6 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 	file_uzemie.close();
 }
 
-
-
-
 void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year)
 {
 	this->filteredData.clear();
@@ -224,11 +221,6 @@ void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int 
 	}
 }
 
-
-
-
-
-
 LevelOne::~LevelOne()
 {
 	this->data.clear();
@@ -238,5 +230,4 @@ LevelOne::~LevelOne()
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PostOrderHierarchyIterator it = this->dataHierarchy.begin();
 	this->dataHierarchy.clear();
 	std::cout << "Size: " << this->dataHierarchy.size() << std::endl;
-	
 }
