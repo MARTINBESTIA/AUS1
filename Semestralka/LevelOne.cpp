@@ -229,5 +229,4 @@ LevelOne::~LevelOne()
 	this->filteredData.shrink_to_fit();
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PostOrderHierarchyIterator it = this->dataHierarchy.begin();
 	this->dataHierarchy.clear();
-	std::cout << "Size: " << this->dataHierarchy.size() << std::endl;
 }

@@ -65,6 +65,8 @@ private:
 	int predYearValue = 0;
 	TerritoryType predTypeValue;
 
+	bool endProgram = false;
+
 	
 	
 	public:
@@ -231,6 +233,7 @@ private:
 		std::cout << "-r --- runs the iterations from set root" << std::endl;
 		std::cout << "s n --- jumps to son at nth index. Example s 3 jumps to son at 3rd index" << std::endl;
 		std::cout << "-f --- jumps to father" << std::endl;
+		std::cout << "-end --- end program" << std::endl;
 		
 		while (true) {
 			std::cout << " ------------------------------------------------" << std::endl;
@@ -242,6 +245,10 @@ private:
 			std::cout << "Write command: " << std::endl;
 			std::string command;
 			std::getline(std::cin, command);
+			if (command == "-end") {
+				this->endProgram = true;
+				return nullptr;
+			}
 			if (command == "-r") {
 				return rootPtr;
 			}
@@ -343,6 +350,8 @@ private:
 
 		std::string getPredValue() { return this->predValue; };
 
+		bool getEndedProgram() { return this->endProgram; };
+
 		int getPredPopulationValue() { return this->predResidentsValue; };
 
 		int getPredYearValue() { return this->predYearValue; };
@@ -350,8 +359,6 @@ private:
 		TerritoryType getPredTypeValue() { return this->predTypeValue; };
 
 		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
-
-		std::vector<Territorial_unit>& getData() { return this->data; };
 
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getRoot() { return this->dataHierarchy.accessRoot(); };
 

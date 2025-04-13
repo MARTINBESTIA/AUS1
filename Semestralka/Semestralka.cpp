@@ -15,11 +15,16 @@ int main()
 	SetConsoleOutputCP(1252);
 	{
 		LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv", "uzemie.csv", "obce.csv");
-		auto it = levelOne.getIterator(*levelOne.getIteratorNode());
-		int choice = levelOne.choosePredicate();
-		switch (choice) {
+		while (true) {
+			auto it = levelOne.getIterator(*levelOne.getIteratorNode());
+			if (levelOne.getEndedProgram()) {
+				std::cout << "Program ended." << std::endl;
+				break;
+			}
+			int choice = levelOne.choosePredicate();
+			switch (choice) {
 			case 1:
-				levelOne.filter(it, levelOne.getNullptrIterator(),levelOne.containsStr, levelOne.getPredValue());
+				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.containsStr, levelOne.getPredValue());
 				break;
 			case 2:
 				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasType, levelOne.getPredTypeValue());
@@ -30,6 +35,7 @@ int main()
 			case 4:
 				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasMinResidents, levelOne.getPredPopulationValue(), levelOne.getPredYearValue());
 				break;
+			}
 		}
 	}
 	_CrtDumpMemoryLeaks();
