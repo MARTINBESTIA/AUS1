@@ -129,10 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DuplicateFreeSSTable.cpp" />
     <ClCompile Include="LevelOne.cpp" />
     <ClCompile Include="Semestralka.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DuplicateFreeSSTable.h" />
     <ClInclude Include="LevelOne.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,6 +13,7 @@
 int main()
 {
 	SetConsoleOutputCP(1252);
+	SetConsoleCP(1252);
 	{
 		LevelOne levelOne("2020.csv", "2021.csv", "2022.csv", "2023.csv", "2024.csv", "uzemie.csv", "obce.csv");
 		while (true) {

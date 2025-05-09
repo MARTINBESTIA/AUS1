@@ -21,9 +21,15 @@
     <ClCompile Include="LevelOne.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DuplicateFreeSSTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LevelOne.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DuplicateFreeSSTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,9 @@
 #include <iostream>
 #include <libds/amt/explicit_hierarchy.h>
 #include <libds/amt/hierarchy.h>
+#include <libds/adt/table.h>
+#include <libds/adt/list.h>
+#include "DuplicateFreeSSTable.h"
 
 
 class LevelOne
@@ -67,7 +70,11 @@ private:
 
 	bool endProgram = false;
 
-	
+	DuplicateFreeSSTable<std::string, Territorial_unit> communeTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit> regionTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit> geoPartTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit> FedRepublicTable = {};
+
 	
 	public:
 		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024, std::string uzemie, std::string obce);

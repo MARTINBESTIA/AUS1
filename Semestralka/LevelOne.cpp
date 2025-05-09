@@ -144,14 +144,17 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		if (unit_id.size() == 5) {
 			int index = stoi(unit_id.substr(3, 1)) - 1;
 			dataHierarchy.emplaceSon(root, index).data_ = Territorial_unit(stoi(unit_id.substr(3, 1)),0,0,0,0,0,0,0,0,0,0,name,unit_id);
-			auto* current = dataHierarchy.accessSon(root, index);
-			int illl = 1;
+			Territorial_unit* current = &dataHierarchy.accessSon(root, index)->data_;
+			this->geoPartTable.insert(name, *current);
+		
 		}
 		if (unit_id.size() == 6) {
 			int fatherIndex = stoi(unit_id.substr(3, 1)) - 1;
 			int sonIndex = stoi(unit_id.substr(4, 1)) - 1;
 			auto* father = dataHierarchy.accessSon(root, fatherIndex);
 			dataHierarchy.emplaceSon(*father, sonIndex).data_ = Territorial_unit(stoi(unit_id.substr(3, 2)), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, name, unit_id);
+			Territorial_unit* current = &dataHierarchy.accessSon(*father, sonIndex)->data_;
+			this->FedRepublicTable.insert(name, *current);
 		}
 		if (unit_id.size() == 7) {
 			int preFatherIndex = stoi(unit_id.substr(3, 1)) - 1;
@@ -161,6 +164,8 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 			auto* preFather = dataHierarchy.accessSon(root, preFatherIndex);
 			auto* father = dataHierarchy.accessSon(*preFather, fatherIndex);
 			dataHierarchy.emplaceSon(*father, sonIndex).data_ = Territorial_unit(stoi(unit_id.substr(3, 3)), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, name, unit_id);
+			Territorial_unit* current = &dataHierarchy.accessSon(*father, sonIndex)->data_;
+			this->regionTable.insert(name, *current);
 		}
 	}
 	int sequenceIndex = 0;
@@ -201,7 +206,7 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		hierarchyIndex++;
 		
 	}
-	
+
 	file_obce.close();
 	file_uzemie.close();
 }
