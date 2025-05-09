@@ -21,6 +21,7 @@ public:
 		if (this->isEmpty())
 		{
 			tableItem = &this->getSequence()->insertFirst().data_;
+			tableItem->data_ = new ListType();
 		}
 		else
 		{
@@ -31,13 +32,26 @@ public:
 				blok->data_.data_->insertLast(data);
 				return;
 			}
+
 			tableItem = key > blok->data_.key_
 				? &this->getSequence()->insertAfter(*blok).data_
 				: &this->getSequence()->insertBefore(*blok).data_;
+			tableItem->data_ = new ListType();
 		}
 
 		tableItem->key_ = key;
 		tableItem->data_->insertLast(data);
+	}
+	void remove(K key)
+	{
+		using TableItemType = ds::adt::TableItem<K, ds::adt::ImplicitList<T>*>;
+		TableItemType* tableItem;
+
+		if (this->tryFindBlockWithKey(key, 0, this->size(), tableItem))
+		{
+			this->getSequence()->remove(*tableItem);
+			delete tableItem->data_;
+		}
 	}
 };
 
