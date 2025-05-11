@@ -4,40 +4,63 @@
 #include <libds/adt/list.h>
 
 template<typename K, typename T>
-class DuplicateFreeSSTable : public ds::adt::SortedSequenceTable<K, ds::adt::ImplicitList<T>*>
+class DuplicateFreeSSTable : public ds::adt::SortedSequenceTable<K, T>
 {
-	using TableType = ds::adt::SortedSequenceTable<K, ds::adt::ImplicitList<T>*>;
+    using Base = ds::adt::SortedSequenceTable<K, T>;
+	using DuplicateTableType = ds::adt::SortedSequenceTable<K, ds::adt::ImplicitList<T*>*>;
 	using ListType = ds::adt::ImplicitList<T>;
+    using BlockType = typename Base::BlockType;
+private:
+    DuplicateTableType* duplicates = {};
 
 public:
-	DuplicateFreeSSTable() : TableType() {}
-	DuplicateFreeSSTable(const DuplicateFreeSSTable& other) : TableType(other) {}
 
-	void insert(K key, T data)
-	{
-		using TableItemType = ds::adt::TableItem<K, ds::adt::ImplicitList<T>*>;
-		TableItemType* tableItem;
+    void insert(const K& key, T data) override
+    {
+        ds::adt::TableItem<K, T>* tableItem;
 
-		if (this->isEmpty())
-		{
-			tableItem = &this->getSequence()->insertFirst().data_;
-		}
-		else
-		{
-			using BlockType = typename TableType::BlockType;
+        if (this->isEmpty())
+        {
+            tableItem = &this->getSequence()->insertFirst().data_;
+        }
+        else
+        {
 			BlockType* blok = nullptr;
-			if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
-			{
-				blok->data_.data_->insertLast(data);
-				return;
-			}
-			tableItem = key > blok->data_.key_
-				? &this->getSequence()->insertAfter(*blok).data_
-				: &this->getSequence()->insertBefore(*blok).data_;
-		}
+            if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
+            {
+				BlockType* blok2 = nullptr;
+                if (this->tryFindBlockWithKey(key, 0, duplicates->size(), blok2)) {
+					duplicates->find(key)->insertLast(&data);
+					// getnes implicit list podla k a insertnes tam hodnotu duplicitnu
+                }
+                else {
+                    // pridas novy table item do duplicates
+					duplicates->insert(key, new ds::adt::ImplicitList<T*>());
+                    duplicates->find(key)->insertLast(&data);
+                }
+            }
+            tableItem = key > blok->data_.key_
+                ? &this->getSequence()->insertAfter(*blok).data_
+                : &this->getSequence()->insertBefore(*blok).data_;
+        }
 
-		tableItem->key_ = key;
-		tableItem->data_->insertLast(data);
+        tableItem->key_ = key;
+        tableItem->data_ = data;
+    }
+    /*
+	T& find(const K& key) const
+	{
+		ds::adt::ImplicitList<T>* data = nullptr;
+		if (!this->tryFind(key, data))
+		{
+			throw std::out_of_range("No such key!");
+		}
+		if (data->calculateIndex(data->accessFirst()) != data->calculateIndex(data->accessLast())) {
+			std::cout << "There are duplicates";
+		}
+		return data->accessFirst();
 	}
+    */
+	
 };
 

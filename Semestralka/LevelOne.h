@@ -37,6 +37,10 @@ private:
 				&& unitName == pUnit.unitName && regionID == pUnit.regionID;
 		};
 
+		bool operator!=(const Territorial_unit& other) const {
+			return !(*this == other);
+		}
+
 		Territorial_unit() = default;
 
 		Territorial_unit(int ptownID, int pmalePopulation2020, int pfemalePopulation2020, int pmalePopulation2021, int pfemalePopulation2021, int pmalePopulation2022,
@@ -46,9 +50,6 @@ private:
 			malePopulation2023(pmalePopulation2023), femalePopulation2023(pfemalePopulation2023), malePopulation2024(pmalePopulation2024),
 			femalePopulation2024(pfemalePopulation2024), unitName(ptownName), regionID(pRegionID) {}
 
-		
-		
-	
 	};
 
 	std::vector<Territorial_unit> data;
@@ -70,10 +71,10 @@ private:
 
 	bool endProgram = false;
 
-	DuplicateFreeSSTable<std::string, Territorial_unit> communeTable = {};
-	DuplicateFreeSSTable<std::string, Territorial_unit> regionTable = {};
-	DuplicateFreeSSTable<std::string, Territorial_unit> geoPartTable = {};
-	DuplicateFreeSSTable<std::string, Territorial_unit> FedRepublicTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit*> communeTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit*> regionTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit*> geoPartTable = {};
+	DuplicateFreeSSTable<std::string, Territorial_unit*> FedRepublicTable = {};
 
 	
 	public:

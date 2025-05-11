@@ -6,6 +6,7 @@
 #include <random>
 #include <unordered_set>
 #include <tests/_details/test.hpp>
+#include "../Semestralka/DuplicateFreeSSTable.h"
 
 namespace ds::tests
 {
@@ -543,6 +544,7 @@ namespace ds::tests
             this->add_test(std::make_unique<GeneralTableTest<adt::UnsortedImplicitSequenceTable<int, int>>>("UnsortedImplicitSequenceTable"));
             this->add_test(std::make_unique<GeneralTableTest<adt::UnsortedExplicitSequenceTable<int, int>>>("UnsortedExplicitSequenceTable"));
             this->add_test(std::make_unique<GeneralTableTest<adt::SortedSequenceTable<int, int>>>("SortedSequenceTable"));
+            //this->add_test(std::make_unique<GeneralTableTest<DuplicateFreeSSTable<int, int>>>("DuplicateFreeSSTable")); 
             this->add_test(std::make_unique<GeneralTableTest<adt::HashTable<int, int>>>("HashTable"));
             this->add_test(std::make_unique<GeneralTableTest<adt::BinarySearchTree<int, int>>>("BinarySearchTree"));
             this->add_test(std::make_unique<GeneralTableTest<adt::Treap<int, int>>>("Treap"));

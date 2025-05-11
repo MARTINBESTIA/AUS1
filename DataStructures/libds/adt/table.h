@@ -132,13 +132,11 @@ namespace ds::adt {
     {
     public:
         void insert(const K& key, T data) override;
-        void insert(const K& key, T data, bool checkDuplicates);
         T remove(const K& key) override;
         bool equals(const ADT& other) override;
 
     protected:
         using BlockType = typename amt::IS<TableItem<K, T>>::BlockType;
-
         BlockType* findBlockWithKey(const K& key) const override;
 
     protected:
@@ -505,40 +503,6 @@ namespace ds::adt {
 
         tableItem->key_ = key;
         tableItem->data_ = data;
-    }
-
-    template<typename K, typename T>
-    void SortedSequenceTable<K, T>::insert(const K& key, T data, bool checkDuplicates)
-    {
-
-        if (!checkDuplicates) {
-            throw std::logic_error("Cannot be false");
-        }
-
-        TableItem<K, ds::adt::ImplicitList<T>>* tableItem;
-
-        if (this->isEmpty())
-        {
-            tableItem = &this->getSequence()->insertFirst().data_;
-        }
-        else
-        {
-            BlockType* blok = nullptr;
-            if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
-            {
-				blok->data_.data_.insertLast(data);
-				return;
-            }
-            tableItem = key > blok->data_.key_
-                ? &this->getSequence()->insertAfter(*blok).data_
-                : &this->getSequence()->insertBefore(*blok).data_;
-        }
-
-        tableItem->key_ = key;
-        ds::adt::ImplicitList<T>* newList = {};
-		newList->insertFirst(data);
-		tableItem->data_.insertLast(newList);
-        //tableItem->data_ = data;
     }
 
     template<typename K, typename T>
