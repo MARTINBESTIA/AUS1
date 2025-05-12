@@ -11,7 +11,7 @@ class DuplicateFreeSSTable : public ds::adt::SortedSequenceTable<K, T>
 	using ListType = ds::adt::ImplicitList<T>;
     using BlockType = typename Base::BlockType;
 private:
-    DuplicateTableType* duplicates = {};
+    DuplicateTableType duplicates = {};
 
 public:
 
@@ -28,15 +28,15 @@ public:
 			BlockType* blok = nullptr;
             if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
             {
-				BlockType* blok2 = nullptr;
-                if (this->tryFindBlockWithKey(key, 0, duplicates->size(), blok2)) {
-					duplicates->find(key)->insertLast(&data);
+				std::cout << "duplicita najdena" << std::endl;
+                if (duplicates.contains(key)) {
+					duplicates.find(key)->insertLast(&data);
 					// getnes implicit list podla k a insertnes tam hodnotu duplicitnu
                 }
                 else {
                     // pridas novy table item do duplicates
-					duplicates->insert(key, new ds::adt::ImplicitList<T*>());
-                    duplicates->find(key)->insertLast(&data);
+                    duplicates.insert(key, new ds::adt::ImplicitList<T*>());
+                    duplicates.find(key)->insertLast(&data);
                 }
             }
             tableItem = key > blok->data_.key_
