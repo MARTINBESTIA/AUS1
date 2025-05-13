@@ -7,11 +7,9 @@
 #include <libds/amt/hierarchy.h>
 
 
-
-
-
 int main()
 {
+
 	SetConsoleOutputCP(1252);
 	SetConsoleCP(1252);
 	{
@@ -38,6 +36,15 @@ int main()
 				break;
 			}
 		}
+		std::cout << "Zadaj kluc od tabulky, od ktorej chces vyhladat inforamcie" << std::endl;
+		std::string kluc = "";
+		while (true) {
+			std::cout << "-End ukonci program, Zadaj kluc: ";
+			std::getline(std::cin, kluc);
+			std::cout << levelOne.getCommuneTable().find(kluc)->unitID << " " << levelOne.getCommuneTable().find(kluc)->unitName << std::endl;
+			break;
+		}
+		
 	}
 	_CrtDumpMemoryLeaks();
 	return 0;

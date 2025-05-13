@@ -7,8 +7,8 @@ template<typename K, typename T>
 class DuplicateFreeSSTable : public ds::adt::SortedSequenceTable<K, T>
 {
     using Base = ds::adt::SortedSequenceTable<K, T>;
-	using DuplicateTableType = ds::adt::SortedSequenceTable<K, ds::adt::ImplicitList<T*>*>;
-	using ListType = ds::adt::ImplicitList<T>;
+    using DuplicateTableType = ds::adt::SortedSequenceTable<K, ds::adt::ImplicitList<T*>*>;
+    using ListType = ds::adt::ImplicitList<T>;
     using BlockType = typename Base::BlockType;
 private:
     DuplicateTableType duplicates = {};
@@ -25,13 +25,13 @@ public:
         }
         else
         {
-			BlockType* blok = nullptr;
+            BlockType* blok = nullptr;
             if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
             {
-				std::cout << "duplicita najdena" << std::endl;
+                std::cout << "duplicita najdena" << std::endl;
                 if (duplicates.contains(key)) {
-					duplicates.find(key)->insertLast(&data);
-					// getnes implicit list podla k a insertnes tam hodnotu duplicitnu
+                    duplicates.find(key)->insertLast(&data);
+                    // getnes implicit list podla k a insertnes tam hodnotu duplicitnu
                 }
                 else {
                     // pridas novy table item do duplicates
@@ -47,20 +47,13 @@ public:
         tableItem->key_ = key;
         tableItem->data_ = data;
     }
-    /*
-	T& find(const K& key) const
+	~DuplicateFreeSSTable()
 	{
-		ds::adt::ImplicitList<T>* data = nullptr;
-		if (!this->tryFind(key, data))
+		for (auto& item : duplicates)
 		{
-			throw std::out_of_range("No such key!");
+			delete item.data_;
 		}
-		if (data->calculateIndex(data->accessFirst()) != data->calculateIndex(data->accessLast())) {
-			std::cout << "There are duplicates";
-		}
-		return data->accessFirst();
 	}
-    */
 	
 };
 

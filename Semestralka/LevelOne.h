@@ -370,6 +370,8 @@ private:
 
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getRoot() { return this->dataHierarchy.accessRoot(); };
 
+		DuplicateFreeSSTable<std::string, Territorial_unit*>& getCommuneTable() { return this->communeTable; };
+
 		~LevelOne();
 
 };
