@@ -79,9 +79,13 @@ namespace ds::adt
     {
     public:
         void sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare) override;
+        void sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&, int, std::string)> compare, int year, std::string gender);
 
     private:
+        amt::ImplicitSequence<size_t> sedgewickSeq = {};
+		size_t sedgewickSeqIndex = 0;
         void shell(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare, size_t k);
+        void shell(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&, int, std::string)> compare, size_t k, int year, std::string gender);
     };
 
     //----------
@@ -182,15 +186,92 @@ namespace ds::adt
     template<typename T>
     void ShellSort<T>::sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare)
     {
-        shell(is, compare, static_cast<size_t>(std::ceil(std::log10(is.size()))));
+        int k = 0;
+        while (true) {
+            size_t gap;
+            if (k % 2 == 0) {
+                gap = 9 * (1 << k) - 9 * (1 << (k / 2)) + 1;
+            }
+            else {
+                gap = 8 * (1 << k) - 6 * (1 << ((k + 1) / 2)) + 1;
+			}
+			if (gap > is.size()) {
+				break;
+			}
+			sedgewickSeq.insertLast().data_ = gap;
+			sedgewickSeqIndex++;
+			k++;
+        }
+        sedgewickSeqIndex--;
+        //shell(is, compare, static_cast<size_t>(std::ceil(std::log10(is.size()))));
+        shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_);
+    }
+
+    template<typename T>
+    void ShellSort<T>::sort(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&, int, std::string)> compare, int year, std::string gender)
+    {
+        int k = 0;
+        while (true) {
+            size_t gap;
+            if (k % 2 == 0) {
+                gap = 9 * (1 << k) - 9 * (1 << (k / 2)) + 1;
+            }
+            else {
+                gap = 8 * (1 << k) - 6 * (1 << ((k + 1) / 2)) + 1;
+            }
+            if (gap > is.size()) {
+                break;
+            }
+            sedgewickSeq.insertLast().data_ = gap;
+            sedgewickSeqIndex++;
+            k++;
+        }
+        sedgewickSeqIndex--;
+        //shell(is, compare, static_cast<size_t>(std::ceil(std::log10(is.size()))), year, gender);
+        shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_, year, gender);
     }
 
     template<typename T>
     void ShellSort<T>::shell(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&)> compare, size_t k)
     {
-        // TODO 12
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        for (size_t d = 0; d < k; d++) {
+            for (size_t i = d; i < is.size(); i++) {
+                size_t j = i;
+                while (j >= k && j - k >= d && compare(is.access(j)->data_, is.access(j - k)->data_)) {
+					std::swap(is.access(j)->data_, is.access(j - k)->data_);
+					j = j - k;
+                }
+            }
+        }/*
+        if (k > 1) {
+			shell(is, compare, k - 1);
+        }*/
+        if (sedgewickSeqIndex > 0) {
+			sedgewickSeqIndex--;
+            shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_);
+        }
+
+    }
+
+    template<typename T>
+    void ShellSort<T>::shell(amt::ImplicitSequence<T>& is, std::function<bool(const T&, const T&, int, std::string)> compare, size_t k, int year, std::string gender)
+    {
+        for (size_t d = 0; d < k; d++) {
+            for (size_t i = d; i < is.size(); i++) {
+                size_t j = i;
+                while (j >= k && j - k >= d && compare(is.access(j)->data_, is.access(j - k)->data_, year, gender)) {
+                    std::swap(is.access(j)->data_, is.access(j - k)->data_);
+                    j = j - k;
+                }
+            }
+        }/*
+        if (k > 1) {
+            shell(is, compare, k - 1, year, gender);
+        }*/
+        if (sedgewickSeqIndex > 0) {
+            sedgewickSeqIndex--;
+            shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_, year, gender);
+        }
     }
 
     template<typename Key, typename T>

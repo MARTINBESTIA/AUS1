@@ -3,10 +3,12 @@
 #include <functional>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include <libds/amt/explicit_hierarchy.h>
 #include <libds/amt/hierarchy.h>
 #include <libds/adt/table.h>
 #include <libds/adt/list.h>
+#include "libds/adt/sorts.h"
 #include "DuplicateFreeSSTable.h"
 
 
@@ -54,6 +56,7 @@ private:
 
 	std::vector<Territorial_unit> data;
 	std::vector<Territorial_unit> filteredData;
+	ds::amt::ImplicitSequence<Territorial_unit> dataFiltered;
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit> dataHierarchy;
 
 	enum TerritoryType {
@@ -68,6 +71,8 @@ private:
 	int predResidentsValue = 0;
 	int predYearValue = 0;
 	TerritoryType predTypeValue;
+	int sortYear = 0;
+	std::string sortGender = "both";
 
 	bool endProgram = false;
 
@@ -165,11 +170,15 @@ private:
 			while (it != end) {
 				if (predicate(*it, str)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
+					auto& block = dataFiltered.insertLast();
+					block.data_ = *it;
+					//std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
 			}
 		};
+
+		
 		
 		template <typename Iterator, typename Predicate>
 		void filter(Iterator begin, Iterator end, Predicate predicate, int residents, int year) {
@@ -177,7 +186,9 @@ private:
 			while (it != end) {
 				if (predicate(*it, residents, year)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: ";
+					auto& block = dataFiltered.insertLast();
+					block.data_ = *it;
+					/*std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: ";
 					switch (year) {
 						case (2020):
 						std::cout << (*it).malePopulation2020;
@@ -213,7 +224,7 @@ private:
 							std::cout << (*it).femalePopulation2024;
 							break;
 					}
-					std::cout << std::endl;
+					std::cout << std::endl;*/
 				}
 				++it;
 			}
@@ -225,11 +236,83 @@ private:
 			while (it != end) {
 				if (predicate(*it, pType)) {
 					filteredData.push_back(*it);
-					std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
+					auto& block = dataFiltered.insertLast();
+					block.data_ = *it;
+					//std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
 				
 			}
+		};
+
+		std::function<bool(const Territorial_unit&, const Territorial_unit&)> compareAlphabetical = [](const Territorial_unit& leftUnit, const Territorial_unit& rightUnit) -> bool {
+			return leftUnit.unitName < rightUnit.unitName;
+		};
+
+		std::function<bool(const Territorial_unit&, const Territorial_unit&, int, std::string)> comparePopulation = [](const Territorial_unit& leftUnit, const Territorial_unit& rightUnit, int year, std::string gender) -> bool {
+			int leftPopulation = 0;
+			int rightPopulation = 0;
+			if (year == 2020 && gender == "male") {
+				leftPopulation = leftUnit.malePopulation2020;
+				rightPopulation = rightUnit.malePopulation2020;
+			}
+			if (year == 2021 && gender == "male") {
+				leftPopulation = leftUnit.malePopulation2021;
+				rightPopulation = rightUnit.malePopulation2021;
+			}
+			if (year == 2022 && gender == "male") {
+				leftPopulation = leftUnit.malePopulation2022;
+				rightPopulation = rightUnit.malePopulation2022;
+			}
+			if (year == 2023 && gender == "male") {
+				leftPopulation = leftUnit.malePopulation2023;
+				rightPopulation = rightUnit.malePopulation2023;
+			}
+			if (year == 2024 && gender == "male") {
+				leftPopulation = leftUnit.malePopulation2024;
+				rightPopulation = rightUnit.malePopulation2024;
+			}
+			if (year == 2020 && gender == "female") {
+				leftPopulation = leftUnit.femalePopulation2020;
+				rightPopulation = rightUnit.femalePopulation2020;
+			}
+			if (year == 2021 && gender == "female") {
+				leftPopulation = leftUnit.femalePopulation2021;
+				rightPopulation = rightUnit.femalePopulation2021;
+			}
+			if (year == 2022 && gender == "female") {
+				leftPopulation = leftUnit.femalePopulation2022;
+				rightPopulation = rightUnit.femalePopulation2022;
+			}
+			if (year == 2023 && gender == "female") {
+				leftPopulation = leftUnit.femalePopulation2023;
+				rightPopulation = rightUnit.femalePopulation2023;
+			}
+			if (year == 2024 && gender == "female") {
+				leftPopulation = leftUnit.femalePopulation2024;
+				rightPopulation = rightUnit.femalePopulation2024;
+			}
+			if (year == 2020 && gender == "both") {
+				leftPopulation = leftUnit.malePopulation2020 + leftUnit.femalePopulation2020;
+				rightPopulation = rightUnit.malePopulation2020 + rightUnit.femalePopulation2020;
+			}
+			if (year == 2021 && gender == "both") {
+				leftPopulation = leftUnit.malePopulation2021 + leftUnit.femalePopulation2021;
+				rightPopulation = rightUnit.malePopulation2021 + rightUnit.femalePopulation2021;
+			}
+			if (year == 2022 && gender == "both") {
+				leftPopulation = leftUnit.malePopulation2022 + leftUnit.femalePopulation2022;
+				rightPopulation = rightUnit.malePopulation2022+ rightUnit.femalePopulation2022;
+			}
+			if (year == 2023 && gender == "both") {
+				leftPopulation = leftUnit.malePopulation2023 + leftUnit.femalePopulation2023;
+				rightPopulation = rightUnit.malePopulation2023 + rightUnit.femalePopulation2023;
+			}
+			if (year == 2024 && gender == "both") {
+				leftPopulation = leftUnit.malePopulation2024 + leftUnit.femalePopulation2024;
+				rightPopulation = rightUnit.malePopulation2024 + rightUnit.femalePopulation2024;
+			}
+			return leftPopulation < rightPopulation;
 		};
 		
 		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getIteratorNode() {
@@ -285,7 +368,60 @@ private:
 		return rootPtr;
 		
 		};
-		
+		int chooseComparator() {
+			std::cout << "CHOOSE COMPARATOR MENU:" << std::endl;
+			std::cout << "comp popul [year] [type] --- sorts unit based on population count. [year] = {2020, 2021, 2022, 2023, 2024}. [type] = {male, female, both}" << std::endl;
+			std::cout << "comp alpha --- sorts units alphabetically, Example comp alpha" << std::endl;
+			std::string command;
+			std::getline(std::cin, command);
+			std::vector<std::string> result;
+			std::stringstream ss(command);
+			std::string token;
+			while (std::getline(ss, token, ' ')) {
+				result.push_back(token);
+			}
+			while (true) {
+				if (result.size() != 2 && result.size() != 4) {
+					std::cout << "Invalid command" << std::endl;
+					continue;
+				}
+				if (result.size() == 2) {
+					if (result[0] == "comp" && result[1] == "alpha") {
+						return 1;
+					}
+					else {
+						std::cout << "Invalid command" << std::endl;
+						continue;
+					}
+				}
+				if (result.size() == 4) {
+					if (result[0] != "comp" && result[1] != "popul") {
+						std::cout << "Invalid command" << std::endl;
+						continue;
+					}
+					try {
+						this->sortYear = std::stoi(result[2]);
+					}
+					catch (std::exception e) {
+						std::cout << "Invalid year" << std::endl;
+						this->sortYear = 0;
+						continue;
+					}
+					if (this->sortYear < 2020 || this->sortYear > 2024) {
+						std::cout << "Invalid year" << std::endl;
+						continue;
+					}
+				}
+				if (result[3] != "male" && result[3] != "female" && result[3] != "both") {
+					std::cout << "Invalid type" << std::endl;
+					continue;
+				}
+				else {
+					this->sortGender = result[3];
+					return 2;
+				}
+			}
+		};
 		int choosePredicate() {
 
 			std::cout << "CHOOSE PREDICATE MENU:" << std::endl;
@@ -331,10 +467,18 @@ private:
 			}
 			if (command.substr(0, 4) == "pmax" || command.substr(0, 4) == "pmin") {
 				std::cout << "Enter year from 2020 to 2024" << std::endl;
+				std::string str;
 				int year = 0;
 				while (true) {
 					std::cout << "Enter year: " << std::endl;
-					std::cin >> year;
+					std::getline(std::cin, str);
+					try {
+						year = std::stoi(str);
+					}
+					catch (std::exception e) {
+						std::cout << "Invalid year" << std::endl;
+						continue;
+					}
 					if (year < 2020 || year > 2024) {
 						std::cout << "Invalid year" << std::endl;
 						continue;
@@ -345,6 +489,35 @@ private:
 			}
 			return 0;
 		};
+
+		void sort(int compNumber) {
+			if (compNumber == 1) {
+				ds::adt::ShellSort<Territorial_unit> shellSort;
+				shellSort.sort(this->dataFiltered, this->compareAlphabetical);
+			}
+			else if (compNumber == 2) {
+				ds::adt::ShellSort<Territorial_unit> shellSort;
+				shellSort.sort(this->dataFiltered, this->comparePopulation, this->sortYear, this->sortGender);
+			}
+			else {
+				std::cout << "Invalid comparator" << std::endl;
+			}
+		}
+
+		void writeOutDataFiltered() {
+			std::cout << "Filtered data:" << std::endl;
+			for (int i = 0; i < this->dataFiltered.size(); i++) {
+				std::cout << this->dataFiltered.access(i)->data_.unitName << ", Unit ID: " << this->dataFiltered.access(i)->data_.unitID << std::endl <<
+					" Male Population 2020: " << this->dataFiltered.access(i)->data_.malePopulation2020 << ", Female Population 2020: " << this->dataFiltered.access(i)->data_.femalePopulation2020 << std::endl <<
+					" Male Population 2021: " << this->dataFiltered.access(i)->data_.malePopulation2021 << ", Female Population 2021: " << this->dataFiltered.access(i)->data_.femalePopulation2021 << std::endl <<
+					" Male Population 2022: " << this->dataFiltered.access(i)->data_.malePopulation2022 << ", Female Population 2022: " << this->dataFiltered.access(i)->data_.femalePopulation2022 << std::endl <<
+					" Male Population 2023: " << this->dataFiltered.access(i)->data_.malePopulation2023 << ", Female Population 2023: " << this->dataFiltered.access(i)->data_.femalePopulation2023 << std::endl <<
+					" Male Population 2024: " << this->dataFiltered.access(i)->data_.malePopulation2024 << ", Female Population 2024: " << this->dataFiltered.access(i)->data_.femalePopulation2024
+					<< std::endl;
+			}
+			this->dataFiltered.clear();
+		};
+		
 
 		ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator getIterator(ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot) {
 			ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator it(&this->dataHierarchy, &currentRoot);

@@ -203,13 +203,11 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 		addResidents(prePreFather->data_, this->data[sequenceIndex]);
 		addResidents(root.data_, this->data[sequenceIndex]);
 
-
 		sequenceIndex++;
 		hierarchyIndex++;
 		
 	}
 
-	std::cout << this->communeTable.find("Bad Schönau")->unitID << " " << this->communeTable.find("Bad Schönau")->unitName << std::endl;
 	file_obce.close();
 	file_uzemie.close();
 }

@@ -9,7 +9,6 @@
 
 int main()
 {
-
 	SetConsoleOutputCP(1252);
 	SetConsoleCP(1252);
 	{
@@ -20,8 +19,9 @@ int main()
 				std::cout << "Program ended." << std::endl;
 				break;
 			}
-			int choice = levelOne.choosePredicate();
-			switch (choice) {
+			int predChoice = levelOne.choosePredicate();
+			int compChoice = levelOne.chooseComparator();
+			switch (predChoice) {
 			case 1:
 				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.containsStr, levelOne.getPredValue());
 				break;
@@ -35,6 +35,8 @@ int main()
 				levelOne.filter(it, levelOne.getNullptrIterator(), levelOne.hasMinResidents, levelOne.getPredPopulationValue(), levelOne.getPredYearValue());
 				break;
 			}
+			levelOne.sort(compChoice);
+			levelOne.writeOutDataFiltered();
 		}
 		std::cout << "Zadaj kluc od tabulky, od ktorej chces vyhladat inforamcie" << std::endl;
 		std::string kluc = "";
