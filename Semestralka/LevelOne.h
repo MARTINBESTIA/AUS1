@@ -517,6 +517,33 @@ private:
 			}
 			this->dataFiltered.clear();
 		};
+
+		void writeUnitInfo(std::string pKey, std::string pTable) {
+			DuplicateFreeSSTable<std::string, Territorial_unit*>* table = nullptr;
+			if (pTable == "communeTable") {
+				table = &this->communeTable;
+			}
+			else if (pTable == "regionTable") {
+				table = &this->regionTable;
+			}
+			else if (pTable == "geoPartTable") {
+				table = &this->geoPartTable;
+			}
+			else if (pTable == "fedRepublicTable") {
+				table = &this->FedRepublicTable;
+			}
+			if (table->contains(pKey)) {
+				std::cout << table->find(pKey)->unitID << " " << table->find(pKey)->unitName << std::endl <<
+					" Male Population 2020: " << table->find(pKey)->malePopulation2020 << ", Female Population 2020: " << table->find(pKey)->femalePopulation2020 << std::endl <<
+					" Male Population 2021: " << table->find(pKey)->malePopulation2021 << ", Female Population 2021: " << table->find(pKey)->femalePopulation2021 << std::endl <<
+					" Male Population 2022: " << table->find(pKey)->malePopulation2022 << ", Female Population 2022: " << table->find(pKey)->femalePopulation2022 << std::endl <<
+					" Male Population 2023: " << table->find(pKey)->malePopulation2023 << ", Female Population 2023: " << table->find(pKey)->femalePopulation2023 << std::endl <<
+					" Male Population 2024: " << table->find(pKey)->malePopulation2024 << ", Female Population 2024: " << table->find(pKey)->femalePopulation2024 << std::endl;
+			}
+			else {
+				std::cout << "Key not found" << std::endl;
+			}
+		}
 		
 
 		ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator getIterator(ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot) {
