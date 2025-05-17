@@ -55,7 +55,6 @@ private:
 	};
 
 	std::vector<Territorial_unit> data;
-	std::vector<Territorial_unit> filteredData;
 	ds::amt::ImplicitSequence<Territorial_unit> dataFiltered;
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit> dataHierarchy;
 
@@ -81,7 +80,6 @@ private:
 	DuplicateFreeSSTable<std::string, Territorial_unit*> geoPartTable = {};
 	DuplicateFreeSSTable<std::string, Territorial_unit*> FedRepublicTable = {};
 
-	
 	public:
 		LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::string pfilePath2022, std::string pfilePath2023, std::string pfilePath2024, std::string uzemie, std::string obce);
 
@@ -149,7 +147,6 @@ private:
 			return false;
 		};
 		
-
 		std::function<void(Territorial_unit&, Territorial_unit&)> addResidents = [](Territorial_unit& father, Territorial_unit& son) -> void {
 			father.malePopulation2020 += son.malePopulation2020;
 			father.femalePopulation2020 += son.femalePopulation2020;
@@ -169,62 +166,20 @@ private:
 			Iterator it = begin;
 			while (it != end) {
 				if (predicate(*it, str)) {
-					filteredData.push_back(*it);
 					auto& block = dataFiltered.insertLast();
 					block.data_ = *it;
-					//std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
 			}
 		};
 
-		
-		
 		template <typename Iterator, typename Predicate>
 		void filter(Iterator begin, Iterator end, Predicate predicate, int residents, int year) {
 			Iterator it = begin;
 			while (it != end) {
 				if (predicate(*it, residents, year)) {
-					filteredData.push_back(*it);
 					auto& block = dataFiltered.insertLast();
 					block.data_ = *it;
-					/*std::cout << (*it).unitName << " " << "<" << (*it).unitID << "> Male Population: ";
-					switch (year) {
-						case (2020):
-						std::cout << (*it).malePopulation2020;
-						break;
-						case (2021):
-							std::cout << (*it).malePopulation2021;
-							break;
-						case (2022):
-							std::cout << (*it).malePopulation2022;
-							break;
-						case (2023):
-							std::cout << (*it).malePopulation2023;
-							break;
-						case (2024):
-							std::cout << (*it).malePopulation2024;
-							break;
-					}
-					std::cout  << " Female population: ";
-					switch (year) {
-						case (2020):
-							std::cout << (*it).femalePopulation2020;
-							break;
-						case (2021):
-							std::cout << (*it).femalePopulation2021;
-							break;
-						case (2022):
-							std::cout << (*it).femalePopulation2022;
-							break;
-						case (2023):
-							std::cout << (*it).femalePopulation2023;
-							break;
-						case (2024):
-							std::cout << (*it).femalePopulation2024;
-							break;
-					}
-					std::cout << std::endl;*/
 				}
 				++it;
 			}
@@ -235,10 +190,8 @@ private:
 			Iterator it = begin;
 			while (it != end) {
 				if (predicate(*it, pType)) {
-					filteredData.push_back(*it);
 					auto& block = dataFiltered.insertLast();
 					block.data_ = *it;
-					//std::cout << (*it).unitName << " " << (*it).unitID << " " << (*it).regionID << std::endl;
 				}
 				++it;
 				
@@ -423,7 +376,6 @@ private:
 			}
 		};
 		int choosePredicate() {
-
 			std::cout << "CHOOSE PREDICATE MENU:" << std::endl;
 			std::cout << "pmax value --- sets predicate to hasMaxResidents, Example pmax 3000" << std::endl;
 			std::cout << "pmin value --- sets predicate to hasMinResidents, Example pmin 3000" << std::endl;
@@ -544,6 +496,23 @@ private:
 				std::cout << "Key not found" << std::endl;
 			}
 		}
+
+		void filterData(int predChoice) {
+			switch (predChoice) {
+				case 1:
+					this->filter(this->data.begin(), this->data.end(), containsStr, getPredValue());
+					break;
+				case 2:
+					this->filter(this->data.begin(), this->data.end(), hasType, getPredTypeValue());
+					break;
+				case 3:
+					this->filter(this->data.begin(), this->data.end(), hasMaxResidents, getPredPopulationValue(), getPredYearValue());
+					break;
+				case 4:
+					this->filter(this->data.begin(), this->data.end(), hasMinResidents, getPredPopulationValue(), getPredYearValue());
+					break;
+				}
+		}
 		
 
 		ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PreOrderHierarchyIterator getIterator(ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>& currentRoot) {
@@ -568,7 +537,7 @@ private:
 
 		void filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year);
 
-		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getRoot() { return this->dataHierarchy.accessRoot(); };
+		ds::amt::MultiWayExplicitHierarchyBlock<Territorial_unit>* getRoot() { return this->dataHierarchy.accessRoot(); }
 
 		DuplicateFreeSSTable<std::string, Territorial_unit*>& getCommuneTable() { return this->communeTable; };
 

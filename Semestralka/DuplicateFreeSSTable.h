@@ -14,7 +14,7 @@ private:
     DuplicateTableType duplicates = {};
 
 public:
-
+    DuplicateFreeSSTable() = default;
     void insert(const K& key, T data) override
     {
         ds::adt::TableItem<K, T>* tableItem;
@@ -28,13 +28,11 @@ public:
             BlockType* blok = nullptr;
             if (this->tryFindBlockWithKey(key, 0, this->size(), blok))
             {
-                std::cout << "duplicita najdena" << std::endl;
+                //std::cout << "duplicita najdena" << std::endl;
                 if (duplicates.contains(key)) {
                     duplicates.find(key)->insertLast(&data);
-                    // getnes implicit list podla k a insertnes tam hodnotu duplicitnu
                 }
                 else {
-                    // pridas novy table item do duplicates
                     duplicates.insert(key, new ds::adt::ImplicitList<T*>());
                     duplicates.find(key)->insertLast(&data);
                 }

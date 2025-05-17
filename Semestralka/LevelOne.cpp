@@ -9,7 +9,6 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 {
 	// beginning level 1
 	this->data = {};
-	this->filteredData = {};
 	std::ifstream file_2020(pfilePath2020);
 	std::ifstream file_2021(pfilePath2021);
 	std::ifstream file_2022(pfilePath2022);
@@ -211,28 +210,24 @@ LevelOne::LevelOne(std::string pfilePath2020, std::string pfilePath2021, std::st
 	file_obce.close();
 	file_uzemie.close();
 }
-
+/*
 void LevelOne::filterOnPredicates(const std::string& str, int maxResidents, int minResidents, int year)
 {
-	this->filteredData.clear();
 	auto it = this->data.begin();
 	auto end = this->data.end();
 	while (it != end) {
 		if (this->containsStr(*(it), str) && this->hasMaxResidents(*(it), maxResidents, year) && this->hasMinResidents(*(it), minResidents, year))
 		{
-			this->filteredData.push_back(*it);
-			std::cout << (*it).unitName << " " << "<" << (*it).unitID << ">" << std::endl;
+			this->dataFiltered.insertLast().data_ = *it;
 		}
 		++it; 
 	}
-}
+}*/
 
 LevelOne::~LevelOne()
 {
 	this->data.clear();
-	this->filteredData.clear();
 	this->data.shrink_to_fit();
-	this->filteredData.shrink_to_fit();
 	ds::amt::MultiWayExplicitHierarchy<Territorial_unit>::PostOrderHierarchyIterator it = this->dataHierarchy.begin();
 	this->dataHierarchy.clear();
 }

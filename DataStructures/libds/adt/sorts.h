@@ -203,7 +203,6 @@ namespace ds::adt
 			k++;
         }
         sedgewickSeqIndex--;
-        //shell(is, compare, static_cast<size_t>(std::ceil(std::log10(is.size()))));
         shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_);
     }
 
@@ -227,7 +226,6 @@ namespace ds::adt
             k++;
         }
         sedgewickSeqIndex--;
-        //shell(is, compare, static_cast<size_t>(std::ceil(std::log10(is.size()))), year, gender);
         shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_, year, gender);
     }
 
@@ -242,10 +240,7 @@ namespace ds::adt
 					j = j - k;
                 }
             }
-        }/*
-        if (k > 1) {
-			shell(is, compare, k - 1);
-        }*/
+        }
         if (sedgewickSeqIndex > 0) {
 			sedgewickSeqIndex--;
             shell(is, compare, sedgewickSeq.access(sedgewickSeqIndex)->data_);

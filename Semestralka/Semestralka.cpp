@@ -17,10 +17,11 @@ int main()
 			std::cout << "Zadaj príkaz na vykonávanie: " << std::endl;
 			std::cout << "-1 --- Prechádzaj hierarchiou" << std::endl;
 			std::cout << "-2 --- Vyhľadaj informácie o tabuľke na základe názvu: " << std::endl;
-			std::cout << "-3 --- Ukonči program: " << std::endl;
+			std::cout << "-3 --- Filtruj obce na základe predikátu: " << std::endl;
+			std::cout << "-4 --- Ukonči program: " << std::endl;
 			std::string command = "";
 			std::getline(std::cin, command);
-			if (command == "-3") {
+			if (command == "-4") {
 				std::cout << "Program ended." << std::endl;
 				break;
 			}
@@ -68,6 +69,11 @@ int main()
 					}
 					levelOne.writeUnitInfo(key, table);
 				}
+			}
+			else if (command == "-3") {
+				int predChoice = levelOne.choosePredicate();
+				levelOne.filterData(predChoice);
+				levelOne.writeOutDataFiltered();
 			}
 			else {
 				std::cout << "invalid command" << std::endl;
